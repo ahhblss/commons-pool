@@ -34,8 +34,7 @@ public abstract class BaseObject {
     }
 
     /**
-     * Used by sub-classes to include the fields defined by the sub-class in the
-     * {@link #toString()} output.
+     *子类需要实现的方法，用来输出子类对象包含的字段及字段值
      *
      * @param builder Field names and values are appended to this object
      */

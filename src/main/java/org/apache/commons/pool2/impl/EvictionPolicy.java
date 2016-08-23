@@ -19,10 +19,8 @@ package org.apache.commons.pool2.impl;
 import org.apache.commons.pool2.PooledObject;
 
 /**
- * To provide a custom eviction policy (i.e. something other than {@link
- * DefaultEvictionPolicy} for a pool, users must provide an implementation of
- * this interface that provides the required eviction policy.
  *
+ *自定义逐出策略
  * @param <T> the type of objects in the pool
  *
  * @version $Revision: $
@@ -32,15 +30,13 @@ import org.apache.commons.pool2.PooledObject;
 public interface EvictionPolicy<T> {
 
     /**
-     * This method is called to test if an idle object in the pool should be
-     * evicted or not.
+     * 检查空闲对象是否应该被逐出
      *
      * @param config    The pool configuration settings related to eviction
      * @param underTest The pooled object being tested for eviction
      * @param idleCount The current number of idle objects in the pool including
      *                      the object under test
-     * @return <code>true</code> if the object should be evicted, otherwise
-     *             <code>false</code>
+     * @return  检查空闲对象是否应该被逐出
      */
     boolean evict(EvictionConfig config, PooledObject<T> underTest,
             int idleCount);

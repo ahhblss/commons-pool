@@ -19,19 +19,8 @@ package org.apache.commons.pool2.impl;
 import org.apache.commons.pool2.PooledObject;
 
 /**
- * Provides the default implementation of {@link EvictionPolicy} used by the
- * pools. Objects will be evicted if the following conditions are met:
- * <ul>
- * <li>the object has been idle longer than
- *     {@link GenericObjectPool#getMinEvictableIdleTimeMillis()} /
- *     {@link GenericKeyedObjectPool#getMinEvictableIdleTimeMillis()}</li>
- * <li>there are more than {@link GenericObjectPool#getMinIdle()} /
- *     {@link GenericKeyedObjectPoolConfig#getMinIdlePerKey()} idle objects in
- *     the pool and the object has been idle for longer than
- *     {@link GenericObjectPool#getSoftMinEvictableIdleTimeMillis()} /
- *     {@link GenericKeyedObjectPool#getSoftMinEvictableIdleTimeMillis()}
- * </ul>
- * This class is immutable and thread-safe.
+ *默认逐出策略
+ *不可变线程安全
  *
  * @param <T> the type of objects in the pool
  *
@@ -41,6 +30,12 @@ import org.apache.commons.pool2.PooledObject;
  */
 public class DefaultEvictionPolicy<T> implements EvictionPolicy<T> {
 
+    /**
+     *满足下面任何条件：
+     * 1,当池中空闲对象大于最小空闲数且该对象最小空闲时间大于IdleSoftEvictTime，可以被逐出
+     * 2,该对象最小空闲时间大于IdleEvictTime，可以被逐出
+     * @return
+     */
     @Override
     public boolean evict(final EvictionConfig config, final PooledObject<T> underTest,
             final int idleCount) {

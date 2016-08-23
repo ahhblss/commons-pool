@@ -40,13 +40,10 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.SwallowedExceptionListener;
 
 /**
- * Base class that provides common functionality for {@link GenericObjectPool}
- * and {@link GenericKeyedObjectPool}. The primary reason this class exists is
- * reduce code duplication between the two pool implementations.
- *
+ *减少子类GenericObjectPool、GenericKeyedObjectPool的重复代码
  * @param <T> Type of element pooled in this pool.
  *
- * This class is intended to be thread-safe.
+ * 线程安全的
  *
  * @version $Revision: $
  *
@@ -61,7 +58,7 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
      */
     public static final int MEAN_TIMING_STATS_CACHE_SIZE = 100;
 
-    // Configuration attributes
+    // 配置属性
     private volatile int maxTotal =
             GenericKeyedObjectPoolConfig.DEFAULT_MAX_TOTAL;
     private volatile boolean blockWhenExhausted =
@@ -183,12 +180,8 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Returns whether to block when the <code>borrowObject()</code> method is
-     * invoked when the pool is exhausted (the maximum number of "active"
-     * objects has been reached).
-     *
-     * @return <code>true</code> if <code>borrowObject()</code> should block
-     *         when the pool is exhausted
+     * 当前池中对象用尽，borrowObject()是否阻塞等待
+     * @return 当前池中对象用尽，borrowObject()是否阻塞等待
      *
      * @see #setBlockWhenExhausted
      */
@@ -212,49 +205,21 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Returns the maximum amount of time (in milliseconds) the
-     * <code>borrowObject()</code> method should block before throwing an
-     * exception when the pool is exhausted and
-     * {@link #getBlockWhenExhausted} is true. When less than 0, the
-     * <code>borrowObject()</code> method may block indefinitely.
-     *
-     * @return the maximum number of milliseconds <code>borrowObject()</code>
-     *         will block.
-     *
-     * @see #setMaxWaitMillis
-     * @see #setBlockWhenExhausted
+     *当池内对象用尽，borrowObject()在抛出异常之前可以阻塞等待的最大时间
+     * @return borrowObject()最大阻塞时间
      */
     public final long getMaxWaitMillis() {
         return maxWaitMillis;
     }
 
-    /**
-     * Sets the maximum amount of time (in milliseconds) the
-     * <code>borrowObject()</code> method should block before throwing an
-     * exception when the pool is exhausted and
-     * {@link #getBlockWhenExhausted} is true. When less than 0, the
-     * <code>borrowObject()</code> method may block indefinitely.
-     *
-     * @param maxWaitMillis the maximum number of milliseconds
-     *                      <code>borrowObject()</code> will block or negative
-     *                      for indefinitely.
-     *
-     * @see #getMaxWaitMillis
-     * @see #setBlockWhenExhausted
-     */
     public final void setMaxWaitMillis(final long maxWaitMillis) {
         this.maxWaitMillis = maxWaitMillis;
     }
 
     /**
-     * Returns whether the pool has LIFO (last in, first out) behaviour with
-     * respect to idle objects - always returning the most recently used object
-     * from the pool, or as a FIFO (first in, first out) queue, where the pool
-     * always returns the oldest object in the idle object pool.
-     *
-     * @return <code>true</code> if the pool is configured with LIFO behaviour
-     *         or <code>false</code> if the pool is configured with FIFO
-     *         behaviour
+     *对象使用策略：后进先出、先进先出
+     * @return true 后进先出
+     *         false 先进先出
      *
      * @see #setLifo
      */
@@ -263,60 +228,27 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Returns whether or not the pool serves threads waiting to borrow objects fairly.
-     * True means that waiting threads are served as if waiting in a FIFO queue.
+     * 客户端排队获取池内对象策略
      *
-     * @return <code>true</code> if waiting threads are to be served
-     *             by the pool in arrival order
+     * @return true  先到先得
      */
     public final boolean getFairness() {
         return fairness;
     }
 
-    /**
-     * Sets whether the pool has LIFO (last in, first out) behaviour with
-     * respect to idle objects - always returning the most recently used object
-     * from the pool, or as a FIFO (first in, first out) queue, where the pool
-     * always returns the oldest object in the idle object pool.
-     *
-     * @param lifo  <code>true</code> if the pool is to be configured with LIFO
-     *              behaviour or <code>false</code> if the pool is to be
-     *              configured with FIFO behaviour
-     *
-     * @see #getLifo()
-     */
+
     public final void setLifo(final boolean lifo) {
         this.lifo = lifo;
     }
 
-    /**
-     * Returns whether objects created for the pool will be validated before
-     * being returned from the <code>borrowObject()</code> method. Validation is
-     * performed by the <code>validateObject()</code> method of the factory
-     * associated with the pool. If the object fails to validate, then
-     * <code>borrowObject()</code> will fail.
-     *
-     * @return <code>true</code> if newly created objects are validated before
-     *         being returned from the <code>borrowObject()</code> method
-     *
-     * @see #setTestOnCreate
-     *
-     * @since 2.2
-     */
+
     public final boolean getTestOnCreate() {
         return testOnCreate;
     }
 
     /**
-     * Sets whether objects created for the pool will be validated before
-     * being returned from the <code>borrowObject()</code> method. Validation is
-     * performed by the <code>validateObject()</code> method of the factory
-     * associated with the pool. If the object fails to validate, then
-     * <code>borrowObject()</code> will fail.
      *
-     * @param testOnCreate  <code>true</code> if newly created objects should be
-     *                      validated before being returned from the
-     *                      <code>borrowObject()</code> method
+     * @param testOnCreate  borrowObject()返回对象之前是否检查对象
      *
      * @see #getTestOnCreate
      *
@@ -327,85 +259,32 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Returns whether objects borrowed from the pool will be validated before
-     * being returned from the <code>borrowObject()</code> method. Validation is
-     * performed by the <code>validateObject()</code> method of the factory
-     * associated with the pool. If the object fails to validate, it will be
-     * removed from the pool and destroyed, and a new attempt will be made to
-     * borrow an object from the pool.
-     *
-     * @return <code>true</code> if objects are validated before being returned
-     *         from the <code>borrowObject()</code> method
-     *
-     * @see #setTestOnBorrow
+     * borrowObject()返回对象之前是否检查对象，如果检查对象失败，该对象会被从池中移除，并重新尝试从池中获取对象
+     * @return borrowObject()返回对象之前是否检查对象，如果检查对象失败，该对象会被从池中移除，并重新尝试从池中获取对象
      */
     public final boolean getTestOnBorrow() {
         return testOnBorrow;
     }
 
-    /**
-     * Sets whether objects borrowed from the pool will be validated before
-     * being returned from the <code>borrowObject()</code> method. Validation is
-     * performed by the <code>validateObject()</code> method of the factory
-     * associated with the pool. If the object fails to validate, it will be
-     * removed from the pool and destroyed, and a new attempt will be made to
-     * borrow an object from the pool.
-     *
-     * @param testOnBorrow  <code>true</code> if objects should be validated
-     *                      before being returned from the
-     *                      <code>borrowObject()</code> method
-     *
-     * @see #getTestOnBorrow
-     */
     public final void setTestOnBorrow(final boolean testOnBorrow) {
         this.testOnBorrow = testOnBorrow;
     }
 
     /**
-     * Returns whether objects borrowed from the pool will be validated when
-     * they are returned to the pool via the <code>returnObject()</code> method.
-     * Validation is performed by the <code>validateObject()</code> method of
-     * the factory associated with the pool. Returning objects that fail validation
-     * are destroyed rather then being returned the pool.
-     *
-     * @return <code>true</code> if objects are validated on return to
-     *         the pool via the <code>returnObject()</code> method
-     *
-     * @see #setTestOnReturn
+     * 对象在returnObject()之前是否检查对象，检查失败，该对象会被销毁不return
+     * @return 对象在returnObject()之前是否检查对象，检查失败，该对象会被销毁不return
      */
     public final boolean getTestOnReturn() {
         return testOnReturn;
     }
 
-    /**
-     * Sets whether objects borrowed from the pool will be validated when
-     * they are returned to the pool via the <code>returnObject()</code> method.
-     * Validation is performed by the <code>validateObject()</code> method of
-     * the factory associated with the pool. Returning objects that fail validation
-     * are destroyed rather then being returned the pool.
-     *
-     * @param testOnReturn <code>true</code> if objects are validated on
-     *                     return to the pool via the
-     *                     <code>returnObject()</code> method
-     *
-     * @see #getTestOnReturn
-     */
     public final void setTestOnReturn(final boolean testOnReturn) {
         this.testOnReturn = testOnReturn;
     }
 
     /**
-     * Returns whether objects sitting idle in the pool will be validated by the
-     * idle object evictor (if any - see
-     * {@link #setTimeBetweenEvictionRunsMillis(long)}). Validation is performed
-     * by the <code>validateObject()</code> method of the factory associated
-     * with the pool. If the object fails to validate, it will be removed from
-     * the pool and destroyed.
-     *
-     * @return <code>true</code> if objects will be validated by the evictor
-     *
-     * @see #setTestWhileIdle
-     * @see #setTimeBetweenEvictionRunsMillis
+     * 处于空闲状态的对象是否被逐出者线程检查，检查失败，对象移除池
+     * @return 处于空闲状态的对象是否被逐出者线程检查，检查失败，对象移除池
      */
     public final boolean getTestWhileIdle() {
         return testWhileIdle;
@@ -445,14 +324,9 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Sets the number of milliseconds to sleep between runs of the idle
-     * object evictor thread. When non-positive, no idle object evictor thread
-     * will be run.
-     *
+     * 逐出者线程运行时间间隔
      * @param timeBetweenEvictionRunsMillis
-     *            number of milliseconds to sleep between evictor runs
-     *
-     * @see #getTimeBetweenEvictionRunsMillis
+     *            毫秒单位
      */
     public final void setTimeBetweenEvictionRunsMillis(
             final long timeBetweenEvictionRunsMillis) {
@@ -461,29 +335,16 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Returns the maximum number of objects to examine during each run (if any)
-     * of the idle object evictor thread. When positive, the number of tests
-     * performed for a run will be the minimum of the configured value and the
-     * number of idle instances in the pool. When negative, the number of tests
-     * performed will be <code>ceil({@link #getNumIdle}/
-     * abs({@link #getNumTestsPerEvictionRun}))</code> which means that when the
-     * value is <code>-n</code> roughly one nth of the idle objects will be
-     * tested per run.
+     *每次检查链接的数量，建议设置和maxActive一样大，这样每次可以有效检查所有的链接
+     * @return 每次检查链接的数量，建议设置和maxActive一样大，这样每次可以有效检查所有的链接
      *
-     * @return max number of objects to examine during each evictor run
-     *
-     * @see #setNumTestsPerEvictionRun
-     * @see #setTimeBetweenEvictionRunsMillis
      */
     public final int getNumTestsPerEvictionRun() {
         return numTestsPerEvictionRun;
     }
 
     /**
-     * Sets the maximum number of objects to examine during each run (if any)
-     * of the idle object evictor thread. When positive, the number of tests
-     * performed for a run will be the minimum of the configured value and the
-     * number of idle instances in the pool. When negative, the number of tests
+     * When negative, the number of tests
      * performed will be <code>ceil({@link #getNumIdle}/
      * abs({@link #getNumTestsPerEvictionRun}))</code> which means that when the
      * value is <code>-n</code> roughly one nth of the idle objects will be
@@ -491,96 +352,46 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
      *
      * @param numTestsPerEvictionRun
      *            max number of objects to examine during each evictor run
-     *
-     * @see #getNumTestsPerEvictionRun
-     * @see #setTimeBetweenEvictionRunsMillis
      */
     public final void setNumTestsPerEvictionRun(final int numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
     }
 
     /**
-     * Returns the minimum amount of time an object may sit idle in the pool
-     * before it is eligible for eviction by the idle object evictor (if any -
-     * see {@link #setTimeBetweenEvictionRunsMillis(long)}). When non-positive,
-     * no objects will be evicted from the pool due to idle time alone.
-     *
-     * @return minimum amount of time an object may sit idle in the pool before
-     *         it is eligible for eviction
-     *
-     * @see #setMinEvictableIdleTimeMillis
-     * @see #setTimeBetweenEvictionRunsMillis
+     * 在逐出者线程把空闲对象逐出池之前，空闲对象在池中存活的最小时间
+     * @return 在逐出者线程把空闲对象逐出池之前，空闲对象在池中存活的最小时间
      */
     public final long getMinEvictableIdleTimeMillis() {
         return minEvictableIdleTimeMillis;
     }
 
-    /**
-     * Sets the minimum amount of time an object may sit idle in the pool
-     * before it is eligible for eviction by the idle object evictor (if any -
-     * see {@link #setTimeBetweenEvictionRunsMillis(long)}). When non-positive,
-     * no objects will be evicted from the pool due to idle time alone.
-     *
-     * @param minEvictableIdleTimeMillis
-     *            minimum amount of time an object may sit idle in the pool
-     *            before it is eligible for eviction
-     *
-     * @see #getMinEvictableIdleTimeMillis
-     * @see #setTimeBetweenEvictionRunsMillis
-     */
     public final void setMinEvictableIdleTimeMillis(
             final long minEvictableIdleTimeMillis) {
         this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
     }
 
     /**
-     * Returns the minimum amount of time an object may sit idle in the pool
-     * before it is eligible for eviction by the idle object evictor (if any -
-     * see {@link #setTimeBetweenEvictionRunsMillis(long)}),
-     * with the extra condition that at least <code>minIdle</code> object
-     * instances remain in the pool. This setting is overridden by
+     * 在minIdle object数量前提下，逐出者线程把空闲对象逐出池之前，空闲对象在池中存活的最小时间
+     * 此配置在下面情况下被覆盖：
      * {@link #getMinEvictableIdleTimeMillis} (that is, if
      * {@link #getMinEvictableIdleTimeMillis} is positive, then
      * {@link #getSoftMinEvictableIdleTimeMillis} is ignored).
      *
-     * @return minimum amount of time an object may sit idle in the pool before
-     *         it is eligible for eviction if minIdle instances are available
+     * @return 在minIdle object数量前提下，逐出者线程把空闲对象逐出池之前，空闲对象在池中存活的最小时间
      *
-     * @see #setSoftMinEvictableIdleTimeMillis
      */
     public final long getSoftMinEvictableIdleTimeMillis() {
         return softMinEvictableIdleTimeMillis;
     }
 
-    /**
-     * Sets the minimum amount of time an object may sit idle in the pool
-     * before it is eligible for eviction by the idle object evictor (if any -
-     * see {@link #setTimeBetweenEvictionRunsMillis(long)}),
-     * with the extra condition that at least <code>minIdle</code> object
-     * instances remain in the pool. This setting is overridden by
-     * {@link #getMinEvictableIdleTimeMillis} (that is, if
-     * {@link #getMinEvictableIdleTimeMillis} is positive, then
-     * {@link #getSoftMinEvictableIdleTimeMillis} is ignored).
-     *
-     * @param softMinEvictableIdleTimeMillis
-     *            minimum amount of time an object may sit idle in the pool
-     *            before it is eligible for eviction if minIdle instances are
-     *            available
-     *
-     * @see #getSoftMinEvictableIdleTimeMillis
-     */
     public final void setSoftMinEvictableIdleTimeMillis(
             final long softMinEvictableIdleTimeMillis) {
         this.softMinEvictableIdleTimeMillis = softMinEvictableIdleTimeMillis;
     }
 
     /**
-     * Returns the name of the {@link EvictionPolicy} implementation that is
-     * used by this pool.
-     *
-     * @return  The fully qualified class name of the {@link EvictionPolicy}
-     *
-     * @see #setEvictionPolicyClassName(String)
+     *默认逐出策略
+     * @return  默认逐出策略
      */
     public final String getEvictionPolicyClassName() {
         return evictionPolicy.getClass().getName();
