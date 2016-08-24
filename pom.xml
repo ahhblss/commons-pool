@@ -45,72 +45,7 @@
     <url>http://svn.apache.org/viewvc/commons/proper/pool/trunk</url>
   </scm>
 
-  <developers>
-    <developer>
-      <name>Morgan Delagrange</name>
-      <id>morgand</id>
-      <email></email>
-      <organization></organization>
-    </developer>
-    <developer>
-      <name>Geir Magnusson</name>
-      <id>geirm</id>
-      <email></email>
-      <organization></organization>
-    </developer>
-    <developer>
-      <name>Craig McClanahan</name>
-      <id>craigmcc</id>
-      <email></email>
-      <organization></organization>
-    </developer>
-    <developer>
-      <name>Rodney Waldhoff</name>
-      <id>rwaldhoff</id>
-      <email></email>
-      <organization></organization>
-    </developer>
-    <developer>
-      <name>David Weinrich</name>
-      <id>dweinr1</id>
-      <email></email>
-      <organization></organization>
-    </developer>
-    <developer>
-      <name>Dirk Verbeeck</name>
-      <id>dirkv</id>
-      <email></email>
-      <organization></organization>
-    </developer>
-    <developer>
-      <name>Robert Burrell Donkin</name>
-      <id>rdonkin</id>
-      <email></email>
-      <organization>The Apache Software Foundation</organization>
-    </developer>
-    <developer>
-      <name>Sandy McArthur</name>
-      <id>sandymac</id>
-      <email></email>
-      <organization>The Apache Software Foundation</organization>
-    </developer>
-    <developer>
-      <name>Simone Tripodi</name>
-      <id>simonetripodi</id>
-      <organization>The Apache Software Foundation</organization>
-    </developer>
-    <developer>
-      <name>Gary Gregory</name>
-      <id>ggregory</id>
-      <organization>The Apache Software Foundation</organization>
-    </developer>
-  </developers>
-  <contributors>
-    <contributor>
-      <name>Todd Carmichael</name>
-      <email>toddc@concur.com</email>
-    </contributor>
-  </contributors>
+
 
   <dependencies>
     <dependency>

@@ -23,7 +23,7 @@ import org.apache.commons.pool2.TrackedUse;
 import org.apache.commons.pool2.UsageTracking;
 
 /**
- * Configuration settings for abandoned object removal.
+ * 被放弃对象移除配置
  *
  * @version $Revision:$
  *

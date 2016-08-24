@@ -184,25 +184,19 @@ public interface PooledObject<T> extends Comparable<PooledObject<T>> {
     void printStackTrace(PrintWriter writer);
 
     /**
-     * Returns the state of this object.
+     * 对象的状态
      * @return state
      */
     PooledObjectState getState();
 
     /**
-     * Marks the pooled object as abandoned.
+     * 标记对象为废弃的
      */
     void markAbandoned();
 
     /**
-     * Marks the object as returning to the pool.
+     * 标记对象处于return状态
      */
     void markReturning();
 
-    // TODO: Uncomment this for version 3 (can't add it to 2.x as it will break
-    //       API compatibility)
-    ///**
-    // * Get the number of times this object has been borrowed.
-    // */
-    //long getBorrowedCount();
 }
