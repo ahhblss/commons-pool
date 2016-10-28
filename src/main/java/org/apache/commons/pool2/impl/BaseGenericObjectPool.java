@@ -189,17 +189,7 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
         return blockWhenExhausted;
     }
 
-    /**
-     * Sets whether to block when the <code>borrowObject()</code> method is
-     * invoked when the pool is exhausted (the maximum number of "active"
-     * objects has been reached).
-     *
-     * @param blockWhenExhausted    <code>true</code> if
-     *                              <code>borrowObject()</code> should block
-     *                              when the pool is exhausted
-     *
-     * @see #getBlockWhenExhausted
-     */
+
     public final void setBlockWhenExhausted(final boolean blockWhenExhausted) {
         this.blockWhenExhausted = blockWhenExhausted;
     }
@@ -290,35 +280,12 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
         return testWhileIdle;
     }
 
-    /**
-     * Returns whether objects sitting idle in the pool will be validated by the
-     * idle object evictor (if any - see
-     * {@link #setTimeBetweenEvictionRunsMillis(long)}). Validation is performed
-     * by the <code>validateObject()</code> method of the factory associated
-     * with the pool. If the object fails to validate, it will be removed from
-     * the pool and destroyed.  Note that setting this property has no effect
-     * unless the idle object evictor is enabled by setting
-     * <code>timeBetweenEvictionRunsMillis</code> to a positive value.
-     *
-     * @param testWhileIdle
-     *            <code>true</code> so objects will be validated by the evictor
-     *
-     * @see #getTestWhileIdle
-     * @see #setTimeBetweenEvictionRunsMillis
-     */
+
     public final void setTestWhileIdle(final boolean testWhileIdle) {
         this.testWhileIdle = testWhileIdle;
     }
 
-    /**
-     * Returns the number of milliseconds to sleep between runs of the idle
-     * object evictor thread. When non-positive, no idle object evictor thread
-     * will be run.
-     *
-     * @return number of milliseconds to sleep between evictor runs
-     *
-     * @see #setTimeBetweenEvictionRunsMillis
-     */
+
     public final long getTimeBetweenEvictionRunsMillis() {
         return timeBetweenEvictionRunsMillis;
     }
@@ -343,16 +310,7 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
         return numTestsPerEvictionRun;
     }
 
-    /**
-     * When negative, the number of tests
-     * performed will be <code>ceil({@link #getNumIdle}/
-     * abs({@link #getNumTestsPerEvictionRun}))</code> which means that when the
-     * value is <code>-n</code> roughly one nth of the idle objects will be
-     * tested per run.
-     *
-     * @param numTestsPerEvictionRun
-     *            max number of objects to examine during each evictor run
-     */
+
     public final void setNumTestsPerEvictionRun(final int numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
     }
@@ -398,15 +356,8 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
     }
 
     /**
-     * Sets the name of the {@link EvictionPolicy} implementation that is
-     * used by this pool. The Pool will attempt to load the class using the
-     * thread context class loader. If that fails, the Pool will attempt to load
-     * the class using the class loader that loaded this class.
-     *
-     * @param evictionPolicyClassName   the fully qualified class name of the
-     *                                  new eviction policy
-     *
-     * @see #getEvictionPolicyClassName()
+     * 设置逐出策略
+     * @param evictionPolicyClassName
      */
     public final void setEvictionPolicyClassName(
             final String evictionPolicyClassName) {
@@ -936,6 +887,7 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
             builder.append("]");
             return builder.toString();
         }
+
     }
 
     /**
@@ -954,33 +906,35 @@ public abstract class BaseGenericObjectPool<T> extends BaseObject {
             this.idleObjects = idleObjects;
 
             if (getLifo()) {
+//                The elements will be returned in order from
+//                last (tail) to first (head)
                 idleObjectIterator = idleObjects.descendingIterator();
             } else {
+//                The elements will be returned in order from first (head) to last (tail).
                 idleObjectIterator = idleObjects.iterator();
             }
         }
 
         /**
-         * Returns the idle object deque referenced by this iterator.
          * @return the idle object deque
          */
         public Deque<PooledObject<T>> getIdleObjects() {
             return idleObjects;
         }
 
-        /** {@inheritDoc} */
+
         @Override
         public boolean hasNext() {
             return idleObjectIterator.hasNext();
         }
 
-        /** {@inheritDoc} */
+
         @Override
         public PooledObject<T> next() {
             return idleObjectIterator.next();
         }
 
-        /** {@inheritDoc} */
+
         @Override
         public void remove() {
             idleObjectIterator.remove();
